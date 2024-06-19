@@ -1,6 +1,7 @@
 package dev.williamfonseca.minio.demo.controller;
 
 import dev.williamfonseca.minio.demo.service.FileService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -13,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/files")
 public class FileController {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
@@ -24,7 +25,8 @@ public class FileController {
       this.fileService = fileService;
    }
 
-   @PostMapping(value = "/upload/{bucketName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   @Operation(summary = "Upload a file to a bucket")
+   @PostMapping(value = "/{bucketName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    public ResponseEntity<FileService.UploadDto> uploadFile(@RequestParam(value = "file") MultipartFile file, @PathVariable String bucketName) {
       try {
          final var objectWriteResponse = fileService.uploadFile(bucketName, file);
@@ -35,7 +37,8 @@ public class FileController {
       }
    }
 
-   @DeleteMapping("/delete/{bucketName}/{filename}")
+   @Operation(summary = "Delete a file from a bucket")
+   @DeleteMapping("/{bucketName}/{filename}")
    public ResponseEntity<String> deleteFile(@PathVariable String bucketName, @PathVariable String filename) {
       try {
          fileService.deleteFile(bucketName, filename);
@@ -46,7 +49,8 @@ public class FileController {
       }
    }
 
-   @GetMapping("/files/{bucketName}")
+   @Operation(summary = "List all files in a bucket")
+   @GetMapping("/{bucketName}")
    public ResponseEntity<List<String>> getAllBucketFiles(@PathVariable String bucketName) {
       try {
          return ResponseEntity.ok(fileService.listBucketFiles(bucketName));
@@ -56,7 +60,8 @@ public class FileController {
       }
    }
 
-   @GetMapping("/download/{bucketName}/{filename}")
+   @Operation(summary = "Download a file from a bucket")
+   @GetMapping("/{bucketName}/{filename}")
    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String bucketName, @PathVariable String filename) {
       try {
          final var inputStream = fileService.downloadFile(bucketName, filename);

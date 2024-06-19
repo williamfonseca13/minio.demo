@@ -1,6 +1,7 @@
 package dev.williamfonseca.minio.demo.controller;
 
 import dev.williamfonseca.minio.demo.service.BucketService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bucket")
+@RequestMapping("/buckets")
 public class BucketController {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(BucketController.class);
@@ -20,7 +21,8 @@ public class BucketController {
       this.minioBucketService = minioBucketService;
    }
 
-   @PostMapping("/create/{bucketName}")
+   @Operation(summary = "Create a bucket")
+   @PostMapping("/{bucketName}")
    public ResponseEntity<String> createBucket(@PathVariable String bucketName) {
       try {
          minioBucketService.createBucket(bucketName);
@@ -31,7 +33,8 @@ public class BucketController {
       }
    }
 
-   @DeleteMapping("/delete/{bucketName}")
+   @Operation(summary = "Delete a bucket")
+   @DeleteMapping("/{bucketName}")
    public ResponseEntity<String> deleteBucket(@PathVariable String bucketName) {
       try {
          minioBucketService.deleteBucket(bucketName);
@@ -42,7 +45,8 @@ public class BucketController {
       }
    }
 
-   @GetMapping("/buckets")
+   @Operation(summary = "List all buckets")
+   @GetMapping
    public ResponseEntity<List<String>> listAllBuckets() {
       try {
          return ResponseEntity.ok(minioBucketService.listAllBuckets());
@@ -52,7 +56,8 @@ public class BucketController {
       }
    }
 
-   @GetMapping("/exists/{bucketName}")
+   @Operation(summary = "Verify if a bucket exists")
+   @GetMapping("/{bucketName}/exist")
    public ResponseEntity<Boolean> bucketExists(@PathVariable String bucketName) {
       try {
          return ResponseEntity.ok(minioBucketService.bucketExists(bucketName));
