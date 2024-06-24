@@ -1,6 +1,7 @@
 package dev.williamfonseca.minio.demo.controller;
 
 import dev.williamfonseca.minio.demo.service.FileService;
+import io.minio.StatObjectResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,44 @@ public class FileController {
                  .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                  .contentType(MediaType.APPLICATION_OCTET_STREAM)
                  .body(new InputStreamResource(inputStream));
+      } catch (Exception e) {
+         LOGGER.error(e.getMessage(), e);
+         return ResponseEntity.status(500).body(null);
+      }
+   }
+
+   public record URL(String url) {
+   }
+
+   @Operation(summary = "Create a file URL")
+   @GetMapping("url/{bucketName}/{filename}")
+   public ResponseEntity<URL> getFileUrl(@PathVariable String bucketName, @PathVariable String filename) {
+      try {
+         final var url = fileService.generateFileUrl(bucketName, filename);
+         return ResponseEntity.ok().body(new URL(url));
+      } catch (Exception e) {
+         LOGGER.error(e.getMessage(), e);
+         return ResponseEntity.status(500).body(null);
+      }
+   }
+
+   @Operation(summary = "Create a file URL")
+   @GetMapping("makePublic/{bucketName}/{filename}")
+   public ResponseEntity<Boolean> makeFilePublic(@PathVariable String bucketName, @PathVariable String filename) {
+      try {
+         fileService.makeObjectPublic(bucketName, filename);
+         return ResponseEntity.ok().body(true);
+      } catch (Exception e) {
+         LOGGER.error(e.getMessage(), e);
+         return ResponseEntity.status(500).body(false);
+      }
+   }
+
+   @Operation(summary = "Create a file URL")
+   @GetMapping("stat/{bucketName}/{filename}")
+   public ResponseEntity<StatObjectResponse> getStat(@PathVariable String bucketName, @PathVariable String filename) {
+      try {
+         return ResponseEntity.ok().body(fileService.getObjectPath(bucketName, filename));
       } catch (Exception e) {
          LOGGER.error(e.getMessage(), e);
          return ResponseEntity.status(500).body(null);
