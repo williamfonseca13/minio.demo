@@ -35,12 +35,8 @@ public class BucketServiceTest {
    @BeforeEach
    void setUp() {
 
-      var minioEndpoint = String.format("http://%s:%d",
-              MINIO_CONTAINER.getHost(),
-              MINIO_CONTAINER.getMappedPort(9000));
-
       minioClient = MinioClient.builder()
-              .endpoint(minioEndpoint)
+              .endpoint("http://%s:%d".formatted(MINIO_CONTAINER.getHost(), MINIO_CONTAINER.getFirstMappedPort()))
               .credentials(MINIO_CONTAINER.getUserName(), MINIO_CONTAINER.getPassword())
               .build();
 

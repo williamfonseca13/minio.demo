@@ -10,4 +10,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
+	// TODO 24/06/2024 22:07 Create another user
+	// add a new policy
+
 }
